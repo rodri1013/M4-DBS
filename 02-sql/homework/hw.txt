@@ -1,0 +1,223 @@
+select name, year from movies where year =1977;
+select count(*) as total from movies where year=1977; --> count = 4027 as es el alias.
+select count(*) from movies where year= 1982; --> count = 4597;
+select * from actors where last_name like '%stack%';
+select count(*) from actors where last_name like '%stack%';--> count = 47;
+
+
+sqlite> select first_name, last_name, count(*) as count
+   ...> from actors
+   ...> group by lower(first_name), lower(last_name)
+   ...> order by count desc
+   ...> limit 10;
+first_name  last_name      count
+----------  -------------  -----
+Shauna      MacDonald      7    
+Fernando    de Soria       6    
+Noemí       del Castillo   5    
+Paola       Del Medico     5    
+Lisa        Lacroix        4    
+Ryan        Mckinney       4    
+Alfonso     Del Real       3    
+Claude      d'Yd           3    
+James (I)   MacDonald      3    
+Javier      Van de Couter  3   
+
+Al aplicar el lower -->  MacDonald = Macdonald pues queda todo en minúscula --> macdonald.
+sqlite> select first_name, last_name, count(*) as count
+   ...> from actors
+   ...> group by first_name, last_name
+   ...> order by count desc
+   ...> limit 10;
+first_name  last_name      count
+----------  -------------  -----
+Shauna      MacDonald      4    
+Fernando    De Soria       3    
+Fernando    de Soria       3    
+Noemí       del Castillo   3    
+Paola       Del Medico     3    
+Shauna      Macdonald      3    
+Alfonso     Del Real       2    
+Claude      d'Yd           2    
+James (I)   MacDonald      2    
+Javier      Van de Couter  2  
+
+
+
+select a.first_name, a.last_name, count(*) as total
+from actors as a
+join roles as r 
+on a.id = r.actor_id
+group by a.id
+order by total desc
+limit 100;/10
+
+first_name  last_name  total
+----------  ---------  -----
+Mel         Blanc      909  
+Bess        Flowers    672  
+Tom         London     549  
+Adoor       Bhasi      544  
+Edmund      Cobb       544  
+Bud         Osborne    544  
+Lee         Phelps     543  
+Prem        Nazir      498  
+Oliver      Hardy      450  
+Emmett      Vogan      447  
+
+select genre, count (*) as total
+from movies_genres
+group by genre
+order by total asc;
+genre        total
+-----------  -----
+Film-Noir    417  
+War          4436 
+Mystery      4971 
+Sci-Fi       5111 
+Fantasy      5223 
+Music        5664 
+Musical      7055 
+Horror       7520 
+Western      8539 
+Adventure    8992 
+Thriller     10953
+Family       11232
+Crime        12966
+Romance      13873
+Action       14885
+Animation    17888
+Adult        20667
+Documentary  42320
+Comedy       57860
+Drama        74615
+Short        82597
+
+sqlite> select a.first_name, a.last_name 
+   ...> from actors as a
+   ...> join roles as r
+   ...> on a.id = r.actor_id
+   ...> join movies as m
+   ...> on r.movie_id = m.id
+   ...> where m.name = 'Braveheart' and m.year = 1995
+   ...> order by a.last_name;
+first_name   last_name   
+-----------  ------------
+Alun         Armstrong   
+Julie (I)    Austin      
+Ian          Bannen      
+Joanne       Bett        
+Stephen      Billington  
+Michael (I)  Byrne       
+Mhairi       Calvey      
+Liam         Carney      
+Jimmy        Chisholm    
+Fred         Chiverton   
+Daniel       Coli        
+James        Cosmo       
+Brian (I)    Cox         
+Martin (I)   Dempsey     
+Martin       Dunne       
+Tommy (I)    Flanagan    
+David (I)    Gant        
+Donal        Gibson      
+Mel (I)      Gibson      
+Brendan      Gleeson     
+Peter        Hanly       
+Bernard      Horsfall    
+John (I)     Kavanagh    
+Phil (I)     Kelly       
+Jimmy        Keogh       
+Sean         Lawlor      
+Richard      Leaf        
+Dean         Lopata      
+Angus        Macfadyen   
+Sophie       Marceau     
+Jeanne       Marine      
+Catherine    McCormack   
+Sean         McGinley    
+Patrick      McGoohan    
+Barry        McGovern    
+David (II)   McKay       
+Gerard       McSorley    
+Peter        Mullan      
+Bill         Murdoch     
+Martin (I)   Murphy      
+John         Murtagh     
+Sandy (II)   Nelson      
+Alex         Norton      
+Niall        O'Brien     
+David (I)    O'Hara      
+Jer          O'Leary     
+Robert       Paterson    
+Ralph        Riach       
+James (II)   Robinson    
+Joe          Savino      
+William      Scott-Masson
+Gerda        Stevenson   
+Alan         Tall        
+Malcolm      Tierney     
+Paul (IV)    Tucker      
+Rupert       Vansittart  
+Ryan (III)   Wallace     
+Andrew       Weir        
+Tam          White       
+Mal          Whyte  
+
+
+select d.first_name, d.last_name, m.name, m.year
+from directors as d
+join movies_directors as md on d.id = md.director_id
+join movies as m on m.id = md.movie_id
+join movies_genres as mg on m.id = mg.movie_id
+where mg.genre = 'Film-Noir' and m.year % 4 = 0
+order by m.name;
+
+
+select a.first_name, a.last_name, m.name
+from actors as a
+join roles as r on r.actor_id = a.id
+join movies as m on m.id = r.movie_id
+join movies_genres as mg on mg.movie_id = m.id
+where mg.genre = 'Drama' and m.id in (
+  select r.movie_id
+  from roles as r
+  join actors as a on r.actor_id = a.id
+  where first_name = 'Kevin' and last_name = 'Bacon'
+)
+and (a.first_name || ' '|| a.last_name != 'Kevin Bacon');
+
+
+select * from actors where id in(
+  select r.actor_id from roles as r 
+  join movies as m on r.movie_id = m.id
+  where m.year < 1900
+) and id in(
+   select r.actor_id from roles as r 
+  join movies as m on r.movie_id = m.id
+  where m.year > 2000
+);
+
+select a.first_name, a.last_name, count(distinct(r.role)) as total
+from actors as a
+join roles as r on a.id = r.actor_id
+join movies as m on m.id = r.movie_id
+where m.year > 1990
+group by r.movie_id, r.actor_id
+having total > 5;
+
+first_name  last_name  total
+----------  ---------  -----
+Robert      Bockstael  6    
+David       Schurmann  6    
+James       Tolkan     6 
+
+select year, count (distinct id)
+from movies where id not in(
+  select r.movie_id 
+  from roles as r
+  join actors as a on r.actor_id = a.id
+  where a.gender = 'M'
+)
+group by year;
+

@@ -1,0 +1,29 @@
+-VIDEOS
+-USUARIOS
+-COMENTARIOS
+-LIKE
+-CANALES
+-LISTAAS DE REPRODUCCION
+-FOLLOWERS
+-FOLOWING
+
+-USUARIOS (followers/following)
+-email
+-password
+-username
+-profile-pic
+
+usuario sigue N personas
+persona sigue a M USUARIOS
+
+-VIDEOS
+-multimedia
+-título
+-descripción
+-duración
+-reproducciones
+
+-autor
+-comentarios asociados
+-etiquetas asociadas
+-pertenecen a una lista

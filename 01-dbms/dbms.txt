@@ -1,0 +1,82 @@
+NOMBRE         DIRECCION         PELICULA ALQUILADA       SALUTATION
+MARTINA        SARASA             Cars, Toy Story          Miss.
+ROBERTO        AV. FALSA 12       Frozen                   Mr.
+JUAN           AV. A 123          Cars, Toy Story          Mr.
+
+
+1ª FORMA NORMAL --> No tener más de un dato en una celda --> Creamos Tabla para películas
+
+NOMBRE         DIRECCION         PELICULA ALQUILADA       SALUTATION
+MARTINA        SARASA            1                        Miss.
+MARTINA        SARASA            2                        Miss.
+MARTINA        AV. FALSA 3       1                        Miss.
+ROBERTO        AV. FALSA 12      3                        Mr.
+JUAN           AV. A 123         1                        Mr.
+JUAN           AV. A 123         2                        Mr.
+
+
+SE PUEDEN CREAR CLAVES COMPUESTAS. Si existe otra MARTINA con otra dirección -> CLAVE COMPUESTA PODRIA SER -> NOMBRE + DIRECCION
+
+PELICULA
+*ID     NOMBRE
+1       Cars
+2       Toy Story
+3       Frozen
+4       Brave        --> Agregamos una peli -> se ahrega clave primaria.
+*ID -> Clave primaria. Elemento identificador. Vamos a obtener uno para las distintas tablas.
+Clave primarias-> No puede ser vacía, No puede ser null. Valor único e irrepetible. Idealmente no se modifican. Si se agregan registros se le agrega la clave primaria.
+
+
+2ª FORMA NORMAL
+-1ª FORMA NORMAL 
+-Y ADEMAS UNA COLUMNA PARA UNA CLAVE PRIMARIA QUE NO DEPENDA DE NINGUN SUBCONJUNTO POSIBLE DE CLAVECOMPUESTA.
+POR ESO TERMINAMOS CREANDO LA TABLA CLIENTES.
+
+NOMBRE         DIRECCION         PELICULA ALQUILADA       SALUTATION
+MARTINA        SARASA            1                        Miss.
+MARTINA        SARASA            2                        Miss.
+MARTINA        AV. FALSA 3       1                        Miss.
+ROBERTO        AV. FALSA 12      3                        Mr.
+JUAN           AV. A 123         1                        Mr.
+JUAN           AV. A 123         2                        Mr.
+
+CLIENTES  
+ID     NOMBRE      DIRECCION      SALUTATION                                                          
+1      MARTINA     SARASA         3             Miss.                      
+2      MARTINA     AV. FALSA 3    2             Mrs.  ---> Si se casa pasa a ser ---> Mrs. --> Martina tiene una dependencia con SALUTATION.                    
+3      ROBERTO     AV. FALSA 12   1             Mr.                                       
+4      JUAN        AV. A 123      1             Mr.
+
+COMMO HAY VALORES DEPENDIENTES HAY QUE ARMAR UNA NUEVA TABLA.
+SALUTATIONS
+ID     SALUTATION
+1      Mr.
+2      Mrs.
+3      Miss.
+
+SI CAMBIO Mr. por Señor cambio ese valor y se va a reflejar en tabla CLIENTES
+
+
+PELICULA
+*ID     NOMBRE
+1       Cars
+2       Toy Story
+3       Frozen
+4       Brave 
+
+
+CLIENTE-PELICULA (RELACION ALQUILER)
+ID  ID_CLIENTE        ID_PELICULA
+1     1                 1
+2     1                 2
+3     2                 1
+4     3                 3
+5     4                 1
+6     4                 2
+
+HUBO QUE CREAR ID PARA ESTA TABLA.
+
+SON CLAVES PRIMARIAS DE OTRAS TABLAS RESPECTIVAMENTE------> CLAVES FORANEAS.
+
+LA IDEA ES AGRUPAR TEMAS EN DISTINTAS TABLAS.
+

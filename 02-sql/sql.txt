@@ -1,0 +1,744 @@
+CONSULTA
+
+Statements
+
+-UPDATE clause {UPDATE country
+-SET clause    {SET population = population + 1 (population + 1)---> expression
+-WHERE clause   {WHERE name = USA; (USA)---> expression
+                        |--> (name = USA)--> predicate
+
+Tabla
+Country
+ID      name      population
+1      Argentina   40 millones
+2      USA         XX millones
+
+--> Arriba dice anda a la tabla country, actualiza la atributo population en population+1 para USA 
+
+
+
+postgres=# \c nombredb ---> te lleva a esa db.
+
+postgres=# \! clear ---> limpia pantalla
+
+postgres=# \d ---> muestra tablas entro de la db, primero accedemos a la DB.
+
+test=# \d nombre_tabla ---> muestra datos de la tabla llamada.
+
+postgres=# create database; --> importante el ; indica el cierre de la instrucción.
+CREATE DATABASE -->nos devuelve info.
+
+postgres=# drop database nombredb; --> elimina db.
+DROP DATABASE
+
+\l --> muestra db
+
+\dt --> muestra tabla dentro del la db que creamos.
+
+CREATE TABLE table_name
+(
+  column_name1 data_type(size),
+  column_name2 data_type(size),
+  column_name3 data_type(size),
+  .......
+);
+
+CONSTRAINS --> reglas que le definimos a los atributos.
+
+dato serial --> para Id, son incrementales.
+
+Toda tabla requiere una PRIMARY KEY..
+
+CIUDADES
+ID        Nombre
+1         Buenos Aires
+2         Tucucmán
+3         Mendoza
+
+
+PERSONAS
+ID       Apellido     Nombre     Ciudad---> References--> lleva un código de la tabla CIUDADES
+1        Scomazzon    Martina     1
+
+
+INSERT INTO ciudades (nombre) VALUES ('Buenos Aires');
+INSERT INTO ciudades (nombre) VALUES ('Tucumán');
+INSERT INTO ciudades (nombre) VALUES ('Mendoza');
+
+
+INSERT INTO ciudades (nombre) VALUES ('Buenos Aires'), ('Tucumán'), ('Mendoza'), ('New York'),
+ ('Caracas'),('Santa Cruz'), ('Campana');
+
+ Consulta: SELECT * FROM ciudades; --> toodos los values de ciudades en columna con su id.
+
+nombre not null
+apellido
+ciudad(FK)
+
+INSERT INTO PERSONAS (nombre, apellido, ciudad) VALUES ('Toni','Tralice', 2);
+INSERT INTO PERSONAS (nombre, ciudad) VALUES ('Martina', 7);
+INSERT INTO PERSONAS (nombre, apellido, ciudad) VALUES ('Martina','Scomazzon',7);
+INSERT INTO PERSONAS (nombre, apellido, ciudad) VALUES ('Tito','Tita', 2);
+INSERT INTO PERSONAS (nombre, apellido, ciudad) VALUES ('Juan','Perez', 4);
+INSERT INTO PERSONAS (nombre, apellido, ciudad) VALUES ('Marta','Gomez', 99);
+(tira un error) igualmente se incrementa el id. Cuando carguemos nuevamente con una ciudad válida 
+el id de Marta será 7 en lugar de 6--> se pierde, no importa que se pierda.
+INSERT INTO PERSONAS (nombre, apellido, ciudad) VALUES ('Marta','Gomez', 5);
+
+
+ id |    nombre    
+----+--------------
+  1 | Buenos Aires
+  2 | Tucumán
+  3 | Mendoza
+  4 | New York
+  5 | Caracas
+  6 | Santa Cruz
+  7 | Campana
+
+ciudades 1-------N personas
+El muchos tiene el id del que tiene 1
+
+id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  1 | Toni    | Tralice   |      2
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+
+SELECT --> hace consultas.
+DROP TABLE table_name--> borra una tabla.
+DELETE --> borra registros.
+
+
+prueba=# SELECT nombre from ciudades;
+    nombre    
+--------------
+ Buenos Aires
+ Tucumán
+ Mendoza
+ New York
+ Caracas
+ Santa Cruz
+ Campana
+(7 rows)
+
+prueba=# select * from personas order by apellido;
+Ordeno el apellido alfabeticamente en forma ascendente.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  7 | Marta   | Gomez     |      5
+  5 | Juan    | Perez     |      4
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  1 | Toni    | Tralice   |      2
+  2 | Martina |           |      7
+(6 rows)
+
+
+prueba=# select * from personas order by apellido desc;
+Ordeno el apellido alfabeticamente en forma descendente.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  2 | Martina |           |      7
+  1 | Toni    | Tralice   |      2
+  4 | Tito    | Tita      |      2
+  3 | Martina | Scomazzon |      7
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+(6 rows)
+
+prueba=# INSERT INTO PERSONAS (nombre, apellido, ciudad) VALUES ('Ana','Tralice',1);
+INSERT 0 1
+prueba=# select * from personas order by apellido;
+Agregó a Ana Tralice 1, pero no está ordenada con respecto a Toni.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  7 | Marta   | Gomez     |      5
+  5 | Juan    | Perez     |      4
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  1 | Toni    | Tralice   |      2
+  8 | Ana     | Tralice   |      1
+  2 | Martina |           |      7
+(7 rows)
+
+
+prueba=# select * from personas order by apellido, nombre;
+Ordena primero por apellido, y si dos apellidos coinciden ordena por nombre.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  7 | Marta   | Gomez     |      5
+  5 | Juan    | Perez     |      4
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  8 | Ana     | Tralice   |      1
+  1 | Toni    | Tralice   |      2
+  2 | Martina |           |      7
+(7 rows)
+
+
+prueba=# select * from personas where apellido = 'Tralice';
+Nos da todos los Tralice, ordenados por Id.
+ id | nombre | apellido | ciudad 
+----+--------+----------+--------
+  1 | Toni   | Tralice  |      2
+  8 | Ana    | Tralice  |      1
+(2 rows)
+
+prueba=# select nombre, ciudad from personas where apellido = 'Tralice';
+Nos muestra sólo nombre y ciudad de la tabla personas con apellido Tralice. Están ordenados por id,
+pero no lo muestra ni tampoco el apellido.
+ nombre | ciudad 
+--------+--------
+ Toni   |      2
+ Ana    |      1
+(2 rows)
+
+
+prueba=# select nombre, ciudad from personas where apellido = 'Tralice' order by nombre ;
+Idem arriba pero además ordenado por nombre.
+ nombre | ciudad 
+--------+--------
+ Ana    |      1
+ Toni   |      2
+(2 rows)
+
+
+prueba=# select nombre, ciudad from personas where apellido = 'Tralice' and  nombre= 'Ana';
+Idem arriba, sólo que apellido Tralice y nombre = Ana
+ nombre | ciudad 
+--------+--------
+ Ana    |      1
+(1 row)
+
+prueba=# insert into personas (nombre, apellido, ciudad) values ('Ana', 'Tralice', 5);
+INSERT 0 1
+Insertamos otra Ana Tralice 5
+prueba=# select nombre, ciudad from personas where apellido= 'Tralice' and nombre= 'Ana';
+Traemos las Ana Tralice y muestra el nombre y ciudad ordenado por id.
+ nombre | ciudad 
+--------+--------
+ Ana    |      1
+ Ana    |      5
+(2 rows)
+
+
+prueba=# select nombre, ciudad from personas where apellido= 'Tralice' or nombre= 'Martina';
+Trae a todos los que tiene apellido Tralice ó nombre Martina.
+ nombre  | ciudad 
+---------+--------
+ Toni    |      2
+ Martina |      7
+ Martina |      7
+ Ana     |      1
+ Ana     |      5
+(5 rows)
+
+prueba=# select nombre, ciudad from personas where (apellido= 'Tralice' and nombre= 'Ana') or 
+nombre= 'Martina';
+Traemos a las Ana Tralice o las de nombre = Martina.
+ nombre  | ciudad 
+---------+--------
+ Martina |      7
+ Martina |      7
+ Ana     |      1
+ Ana     |      5
+(4 rows)
+
+prueba=# select nombre, ciudad from personas where (apellido= 'Tralice' and nombre= 'Ana') or 
+nombre= 'Martina' order by ciudad;
+Idem arriba sólo que ordenamos por ciudad.
+ nombre  | ciudad 
+---------+--------
+ Ana     |      1
+ Ana     |      5
+ Martina |      7
+ Martina |      7
+(4 rows)
+
+
+prueba=# select * from personas where nombre like 'To%';
+Trae de personas a aquellos cuyo --> nombre sea parecido a To... --> nombre like 'To%' comienzan con To.
+ id | nombre | apellido | ciudad 
+----+--------+----------+--------
+  1 | Toni   | Tralice  |      2
+(1 row)
+
+prueba=# select * from personas where nombre like '%na';
+Trae aquellas cuyo nombre empiezan con cualquier cosa y termina en na ---> ...na --> Ana, Martina.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  8 | Ana     | Tralice   |      1
+  9 | Ana     | Tralice   |      5
+(4 rows)
+
+prueba=# select * from personas where nombre like '%A%'; --> que empiecen con A. 
+
+ id | nombre | apellido | ciudad 
+----+--------+----------+--------
+  8 | Ana    | Tralice  |      1
+  9 | Ana    | Tralice  |      5
+(2 rows)
+
+
+prueba=# select * from personas where nombre like '%a%'; -->  nombres que contienen a en algún lugar.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+  8 | Ana     | Tralice   |      1
+  9 | Ana     | Tralice   |      5
+(6 rows)
+
+prueba=# select * from personas where nombre ilike '%A%'; --> ilike fuerza a que traiga a todos los
+que tengan una A ó a . Lo hace case insensitive.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+  8 | Ana     | Tralice   |      1
+  9 | Ana     | Tralice   |      5
+(6 rows)
+
+
+prueba=# select * from personas where nombre ilike '%A%' order by nombre;
+Idem arriba sólo que ordenado alfabeticamente por nombre.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  8 | Ana     | Tralice   |      1
+  9 | Ana     | Tralice   |      5
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+(6 rows)
+
+prueba=# select distinct nombre from personas;
+Trae todos los nombres distintos que haya en personas.
+ nombre  
+---------
+ Martina
+ Tito
+ Marta
+ Ana
+ Juan
+ Toni
+(6 rows)
+
+prueba=# select distinct nombre, apellido from personas;
+Trae sólo una vez por nombre y apellido. Los que se repitan no entran.
+ nombre  | apellido  
+---------+-----------
+ Tito    | Tita
+ Marta   | Gomez
+ Toni    | Tralice
+ Ana     | Tralice
+ Martina | Scomazzon
+ Juan    | Perez
+ Martina | 
+(7 rows)
+
+prueba=# select distinct nombre, apellido, ciudad  from personas;
+Acá si trae a dos Ana Tralice, pero cada una tiene una ciudad distinta.
+ nombre  | apellido  | ciudad 
+---------+-----------+--------
+ Toni    | Tralice   |      2
+ Marta   | Gomez     |      5
+ Martina |           |      7
+ Ana     | Tralice   |      1
+ Tito    | Tita      |      2
+ Juan    | Perez     |      4
+ Martina | Scomazzon |      7
+ Ana     | Tralice   |      5
+(8 rows)
+
+
+prueba=# select (nombre || ' '|| apellido) as "Nombre y Apellido" from personas;
+Concatena nombre y apellido de la tabla personas y crea una nueva tabla Nombre y Apellido, 
+"Nombre y Apellido" comillas dobles.
+
+ Nombre y Apellido 
+-------------------
+ Toni Tralice
+                    -----> espacio vacío pues hay una Martina sin apellido. 
+ Martina Scomazzon
+ Tito Tita
+ Juan Perez
+ Marta Gomez
+ Ana Tralice
+ Ana Tralice
+(8 rows)
+
+prueba=# select concat(nombre,' ',apellido) as "Nombre y Apellido" from personas;
+ Nombre y Apellido 
+-------------------
+ Toni Tralice
+ Martina 
+ Martina Scomazzon
+ Tito Tita
+ Juan Perez
+ Marta Gomez
+ Ana Tralice
+ Ana Tralice
+(8 rows)
+
+prueba=# select nombre as N from personas;
+Toma todos los nombres de la tabla personas y crea una tabla con nombre n.
+    n    
+---------
+ Toni
+ Martina
+ Martina
+ Tito
+ Juan
+ Marta
+ Ana
+ Ana
+(8 rows)
+
+
+Funciones de agregación -> permiten analizar data
+prueba=# select count(*) as count from personas; --> as count es un alias. Si fuese as hola.
+Cuenta todos los registros que hay en personas y lo muestra en una tabla llamada count/hola.
+ count 
+-------
+     8
+(1 row)
+
+Vemos efectivamente que hay 8 filas en la tabla personas.
+
+prueba=# select * from personas;
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  1 | Toni    | Tralice   |      2
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+  8 | Ana     | Tralice   |      1
+  9 | Ana     | Tralice   |      5
+(8 rows)
+
+
+prueba=# select ciudad, count(ciudad) from personas group by ciudad;
+Selecciona la columna ciudad de la tabla personas y cuenta cuantas veces aparece c/u. 
+ ciudad | count 
+--------+-------
+      5 |     2
+      4 |     1
+      2 |     2
+      7 |     2
+      1 |     1
+(5 rows)
+
+prueba=# select ciudad, count(ciudad) from personas group by ciudad order by count(ciudad) ;
+Idem anterior pero ordenado en forma ascendente la count de c/ciudad.
+ ciudad | count 
+--------+-------
+      4 |     1
+      1 |     1
+      5 |     2
+      2 |     2
+      7 |     2
+(5 rows)
+
+prueba=# select ciudad, count(ciudad) from personas group by ciudad order by count(ciudad) desc;
+Idem anterior descendente.
+ ciudad | count 
+--------+-------
+      5 |     2
+      2 |     2
+      7 |     2
+      4 |     1
+      1 |     1
+(5 rows)
+
+prueba=# select ciudad,nombre, count(ciudad) from personas group by nombre, ciudad;
+Toma ciudad y nombre y cuenta cuantas veces se repite el nombre por cada ciudad.
+ ciudad | nombre  | count 
+--------+---------+-------
+      4 | Juan    |     1
+      5 | Marta   |     1
+      2 | Toni    |     1
+      1 | Ana     |     1
+      2 | Tito    |     1
+      7 | Martina |     2
+      5 | Ana     |     1
+(7 rows)
+
+
+prueba=# select * from personas limit 5;--> trae los primeros X registros.
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  1 | Toni    | Tralice   |      2
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  5 | Juan    | Perez     |      4
+(5 rows)
+
+prueba=# select * from ciudades where id not in(4,6);--> trae las ciudades cuyo id no sean ni 4 ni 6.
+ id |    nombre    
+----+--------------
+  1 | Buenos Aires
+  2 | Tucumán
+  3 | Mendoza
+  5 | Caracas
+  7 | Campana
+(5 rows)
+
+prueba=# select * from ciudades where id in(4,6);--> trae las ciudades cuyo id sean (4,6)
+ id |   nombre   
+----+------------
+  4 | New York
+  6 | Santa Cruz
+(2 rows)
+
+prueba=# select * from ciudades where id between 4 and 6;--> trae ciudades con id del 4 al 6 inclusives.
+ id |   nombre   
+----+------------
+  4 | New York
+  5 | Caracas
+  6 | Santa Cruz
+(3 rows)
+
+prueba=# select * from personas where apellido not in ('Tralice','Scomazzon');--> trae los que no son ('x','y')
+ id | nombre | apellido | ciudad 
+----+--------+----------+--------
+  4 | Tito   | Tita     |      2
+  5 | Juan   | Perez    |      4
+  7 | Marta  | Gomez    |      5
+(3 rows)
+
+
+prueba=# select * from personas where apellido in ('Tralice','Scomazzon');--> trae los ('x','y')
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  1 | Toni    | Tralice   |      2
+  3 | Martina | Scomazzon |      7
+  8 | Ana     | Tralice   |      1
+  9 | Ana     | Tralice   |      5
+(4 rows)
+
+
+
+prueba=# select * from ciudades;
+ id |    nombre    
+----+--------------
+  1 | Buenos Aires
+  2 | Tucumán
+  3 | Mendoza
+  4 | New York
+  5 | Caracas
+  6 | Santa Cruz
+  7 | Campana
+(7 rows)
+
+prueba=# select * from personas;
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  1 | Toni    | Tralice   |      2
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+  8 | Ana     | Tralice   |      1
+  9 | Ana     | Tralice   |      5
+(8 rows)
+
+SUBQUERY --> query que depende de otra query.
+
+prueba=# select * from personas where id in (select id from ciudades where id >2);
+Primero resuelve lo que está entre paréntesis.
+1- Nos da las ciudades con id > 2 -->(3,4,5,7).
+2- Nos da las personas con id (3,4,5,7) --> toma esos id de la condición 1, por eso descarta 8 y 9. 
+
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  3 | Martina | Scomazzon |      7
+  4 | Tito    | Tita      |      2
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+(4 rows)
+
+
+prueba=# select * from personas where ciudad in (select id from ciudades where id > 2);
+1-ciudades(3,4,5,6,7)
+2- nombres que viven en ciudades (3,4,5,6,7) 
+ id | nombre  | apellido  | ciudad 
+----+---------+-----------+--------
+  2 | Martina |           |      7
+  3 | Martina | Scomazzon |      7
+  5 | Juan    | Perez     |      4
+  7 | Marta   | Gomez     |      5
+  9 | Ana     | Tralice   |      5
+(5 rows)
+
+
+
+prueba=# update ciudades set nombre = 'Córdoba' where id = 3;
+UPDATE 1
+update nombre_tabla set nombre_columna= nuevo_valor where condición;
+
+Actualiza de la tabla ciudades, al id=3, y se lo cambia por Córdoba. Antes id=3=Mendoza, ahora es Córdoba
+prueba=# select * from ciudades;
+ id |    nombre    
+----+--------------
+  1 | Buenos Aires
+  2 | Tucumán
+  4 | New York
+  5 | Caracas
+  6 | Santa Cruz
+  7 | Campana
+  3 | Córdoba
+(7 rows)
+
+prueba=# delete from ciudades where id=3;
+DELETE 1
+Borra de la tabla ciudades el registro cuyo id= X; En este caso borra Córdoba. Lo borrado se pierde para siempre.
+
+prueba=# delete from ciudades;--> borra el conteido de la tabla pero no la tabla en sí.
+
+prueba=# select * from ciudades;
+ id |    nombre    
+----+--------------
+  1 | Buenos Aires
+  2 | Tucumán
+  4 | New York
+  5 | Caracas
+  6 | Santa Cruz
+  7 | Campana
+(6 rows)
+
+
+JOIN QUERIES = UNIR TABLAS (CONSULTAS) 
+
+prueba=# select * from personas join ciudades on ciudades.id= personas.ciudad;
+toma todos los registros de personas y los une a ciudades donde todos los id de ciudades coincidan 
+con los id de personas.
+Te trae ambas tablas. Como vemos coincide el código de la ciudad de personas con el id de ciudades y
+así podemos ver a qué código de ciudad pertenece.
+prueba=# select * from personas join ciudades on ciudades.id= personas.ciudad;
+ id | nombre  | apellido  | ciudad | id |    nombre    
+----+---------+-----------+--------+----+--------------
+  1 | Toni    | Tralice   |      2 |  2 | Tucumán
+  2 | Martina |           |      7 |  7 | Campana
+  3 | Martina | Scomazzon |      7 |  7 | Campana
+  4 | Tito    | Tita      |      2 |  2 | Tucumán
+  5 | Juan    | Perez     |      4 |  4 | New York
+  7 | Marta   | Gomez     |      5 |  5 | Caracas
+  8 | Ana     | Tralice   |      1 |  1 | Buenos Aires
+  9 | Ana     | Tralice   |      5 |  5 | Caracas
+(8 rows)
+
+
+prueba=# select personas.nombre, apellido, ciudades.nombre from personas join ciudades 
+on ciudades.id = personas.ciudad;
+Trae de la tabla personas el nombre, como ciudades también tiene nombre entonces se debe aclarar
+personas.nombre, apellido(sóloestá en personas), ciudades.nombre(toma el nombre de la tabla ciudades)
+personas join ciudades --> une esas tablas on las propiedades que queríamos, donde coincida la info, 
+o sea en ciudades.id= personas.ciudad--> intersección de los códigos.
+
+ nombre  | apellido  |    nombre    
+---------+-----------+--------------
+ Toni    | Tralice   | Tucumán
+ Martina |           | Campana
+ Martina | Scomazzon | Campana
+ Tito    | Tita      | Tucumán
+ Juan    | Perez     | New York
+ Marta   | Gomez     | Caracas
+ Ana     | Tralice   | Buenos Aires
+ Ana     | Tralice   | Caracas
+(8 rows)
+
+prueba=# insert into ciudades (nombre) values ('Córdoba');
+INSERT 0 1
+prueba=# select * from ciudades;
+ id |    nombre    
+----+--------------
+  1 | Buenos Aires
+  2 | Tucumán
+  4 | New York
+  5 | Caracas
+  6 | Santa Cruz
+  7 | Campana
+  8 | Córdoba
+(7 rows)
+
+
+prueba=# select ciudades.nombre from ciudades left join personas on ciudades.id = personas.ciudad;
+    nombre    
+--------------
+ Tucumán
+ Campana
+ Campana
+ Tucumán
+ New York
+ Caracas
+ Buenos Aires
+ Caracas
+ Córdoba
+ Santa Cruz
+(10 rows)
+
+prueba=# select * from ciudades left join personas on ciudades.id = personas.ciudad;
+Acá nos quedamos con las ciudades a la izquierda y a derecha vemos a las personas.
+ id |    nombre    | id | nombre  | apellido  | ciudad 
+----+--------------+----+---------+-----------+--------
+  2 | Tucumán      |  1 | Toni    | Tralice   |      2
+  7 | Campana      |  2 | Martina |           |      7
+  7 | Campana      |  3 | Martina | Scomazzon |      7
+  2 | Tucumán      |  4 | Tito    | Tita      |      2
+  4 | New York     |  5 | Juan    | Perez     |      4
+  5 | Caracas      |  7 | Marta   | Gomez     |      5
+  1 | Buenos Aires |  8 | Ana     | Tralice   |      1
+  5 | Caracas      |  9 | Ana     | Tralice   |      5
+  8 | Córdoba      |    |         |           |       
+  6 | Santa Cruz   |    |         |           |       
+(10 rows)
+
+
+Diferencia entre casos es que todas las ciudades están en un diagrama a la izquierda y las personas con a derecha.
+Al tomar a izquierda se queda con la intersección más lo que está a izquierda.
+
+Al elegir derecha se queda con todo lo de personas, y como hay ciudades que no tienen ningún vínculo con
+personas esas quedan afuera.
+
+prueba=# select * from ciudades right  join personas on ciudades.id = personas.ciudad;
+ id |    nombre    | id | nombre  | apellido  | ciudad 
+----+--------------+----+---------+-----------+--------
+  2 | Tucumán      |  1 | Toni    | Tralice   |      2
+  7 | Campana      |  2 | Martina |           |      7
+  7 | Campana      |  3 | Martina | Scomazzon |      7
+  2 | Tucumán      |  4 | Tito    | Tita      |      2
+  4 | New York     |  5 | Juan    | Perez     |      4
+  5 | Caracas      |  7 | Marta   | Gomez     |      5
+  1 | Buenos Aires |  8 | Ana     | Tralice   |      1
+  5 | Caracas      |  9 | Ana     | Tralice   |      5
+(8 rows)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

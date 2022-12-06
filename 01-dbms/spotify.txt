@@ -1,0 +1,62 @@
+SPOTIFY
+
+-Autor
+-Canciones
+-Album
+-Usuarios
+-Favoritos
+-Genero
+-Tipo de Usuarios
+
+
+ANALISIS CON FEEDBACK PARA ESTABLECER LA RELACION
+         USUARIO               PLAYLIST
+            
+                   -------->      N
+                   Escuchar      
+               M   <-------                     
+                 
+                    -------->     N
+                   Crear      
+               1   <-------       
+
+                    -------->     N
+                   Compartir      
+               M   <-------                                   
+
+TIPO RELACION
+M------N (muchos a muchos)
+1------N (uno a muchos)
+
+USUARIO                                PLAYLIST--> Tiene referencias canciones.
+-Nombre                                -Nombre
+-Email                                (-Canciones)
+-Password                              -Duración
+                                       -Género
+                                       Privado/Público
+
+PLAYLIST --> N CANCIONES
+CANCIONES --> M PLAYLIST
+
+ALBUM --> N CANCIONES
+CANCIONES --> 1 ALBUM Puede no ser así.
+
+ARTISTA --> N ALBUM
+ALBUM --> 1 ARTISTA
+
+CANCIONES --> 1 GENERO
+GENERO --> N CANCIONES
+
+         PRODUCTORA        ALBUM               CANCIONES         GENERO
+         -Nombre           -Nombre             -Nombre           -Id
+                           -Id                 -Duración         -Nombre
+                           -Año                (-Género)
+                                               (-Artista)
+                                               (-Album)
+                                               -Id
+
+
+
+
+
+
